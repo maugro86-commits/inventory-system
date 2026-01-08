@@ -7,7 +7,7 @@
 const CONFIG = {
     // URL de tu Google Apps Script (obtener después del despliegue)
     // Cambia esto a 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE' para usar modo local sin API
-    SHEET_API_URL: 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE',
+    SHEET_API_URL: 'https://script.google.com/macros/s/AKfycbw7Pcpy6AYPx81jKuKiA1VzN_k14_FK9IkEpje8rx3BueMFrRVjRuYQShXWhN_K_6AnsA/exec',
     
     // Configuración de la aplicación
     APP_NAME: 'Cervecería - Sistema de Inventarios',
@@ -284,3 +284,4 @@ function loadStateFromLocalStorage() {
 
 // Auto-guardar cada 30 segundos
 setInterval(saveStateToLocalStorage, 30000);
+Conectar con Google Sheets
