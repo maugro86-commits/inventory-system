@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Inventarios - Cervecería</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Pantalla de Login -->
+    <div id="loginScreen" class="screen active">
+        <div class="login-container">
+            <div class="login-box">
+                <div class="beer-icon">🍺</div>
+                <h1>Sistema de Inventarios</h1>
+                <h2>Cervecería</h2>
+                <form id="loginForm">
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="username" placeholder="Usuario" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" placeholder="Contraseña" required>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                    </button>
+                    <div id="loginError" class="error-message"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pantalla Principal -->
+    <div id="mainScreen" class="screen">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-left">
+                <span class="beer-icon">🍺</span>
+                <h1>Cervecería - Inventarios</h1>
+            </div>
+            <div class="header-right">
+                <div class="last-update">
+                    <i class="fas fa-clock"></i>
+                    <span id="lastUpdate">Cargando...</span>
+                </div>
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="currentUser"></span>
+                    <span id="userRole" class="user-role"></span>
+                </div>
+                <button id="logoutBtn" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="main-nav">
+            <button class="nav-tab active" data-section="dashboard">
+                <i class="fas fa-chart-line"></i> Dashboard
+            </button>
+            <button class="nav-tab" data-section="materiasPrimas">
+                <i class="fas fa-seedling"></i> Materias Primas
+            </button>
+            <button class="nav-tab" data-section="recetas">
+                <i class="fas fa-book"></i> Recetas
+            </button>
+            <button class="nav-tab" data-section="estilos">
+                <i class="fas fa-beer"></i> Estilos
+            </button>
+            <button class="nav-tab" data-section="unitanques">
+                <i class="fas fa-database"></i> Tanques
+            </button>
+            <button class="nav-tab" data-section="produccion">
+                <i class="fas fa-industry"></i> Producción
+            </button>
+            <button class="nav-tab" data-section="insumos">
+                <i class="fas fa-box"></i> Insumos
+            </button>
+            <button class="nav-tab" data-section="etiquetas">
+                <i class="fas fa-tag"></i> Etiquetas
+            </button>
+            <button class="nav-tab" data-section="envasado">
+                <i class="fas fa-wine-bottle"></i> Envasado
+            </button>
+            <button class="nav-tab" data-section="pedidos">
+                <i class="fas fa-clipboard-list"></i> Pedidos
+            </button>
+            <button class="nav-tab" data-section="ventas">
+                <i class="fas fa-cash-register"></i> Ventas
+            </button>
+            <button class="nav-tab" data-section="reportes">
+                <i class="fas fa-chart-bar"></i> Reportes
+            </button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboardSection" class="content-section active">
+                <h2><i class="fas fa-chart-line"></i> Dashboard</h2>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #d4af37;">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="statMateriasPrimas">0</h3>
+                            <p>Materias Primas</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #cd853f;">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="statTanques">0</h3>
+                            <p>Tanques Activos</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #b8860b;">
+                            <i class="fas fa-wine-bottle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="statProducto">0</h3>
+                            <p>Productos Listos</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #8b7355;">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="statPedidos">0</h3>
+                            <p>Pedidos Pendientes</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <h3>Stock de Producto Terminado</h3>
+                        <canvas id="chartProductos"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Capacidad de Tanques</h3>
+                        <canvas id="chartTanques"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Materias Primas Section -->
+            <section id="materiasPrimasSection" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-seedling"></i> Materias Primas</h2>
+                    <button class="btn-primary" onclick="showAddMateriaPrimaModal()">
+                        <i class="fas fa-plus"></i> Agregar Materia Prima
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Unidad</th>
+                                <th>Stock Actual</th>
+                                <th>Stock Mínimo</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="materiasPrimasTableBody">
+                            <tr>
+                                <td colspan="6" class="loading">Cargando datos...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Recetas Section -->
+            <section id="recetasSection" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-book"></i> Recetas</h2>
+                    <button class="btn-primary" onclick="showAddRecetaModal()">
+                        <i class="fas fa-plus"></i> Crear Receta
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Estilo</th>
+                                <th>Volumen (L)</th>
+                                <th>Ingredientes</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recetasTableBody">
+                            <tr>
+                                <td colspan="5" class="loading">Cargando datos...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Estilos Section -->
+            <section id="estilosSection" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-beer"></i> Estilos de Cerveza</h2>
+                    <button class="btn-primary" onclick="showAddEstiloModal()">
+                        <i class="fas fa-plus"></i> Agregar Estilo
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Tipo</th>
+                                <th>ABV (%)</th>
+                                <th>IBU</th>
+                                <th>Color</th>
+                                <th>Activo</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="estilosTableBody">
+                            <tr>
+                                <td colspan="7" class="loading">Cargando datos...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Unitanques Section -->
+            <section id="unitanquesSection" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-database"></i> Unitanques y Brite Tanks</h2>
+                </div>
+
+                <div class="tanks-grid">
+                    <div class="tank-category">
+                        <h3>Unitanques 1000L</h3>
+                        <div id="tanks1000" class="tanks-container"></div>
+                    </div>
+                    
+                    <div class="tank-category">
+                        <h3>Unitanques 2000L</h3>
+                        <div id="tanks2000" class="tanks-container"></div>
+                    </div>
+                    
+                    <div class="tank-category">
+                        <h3>Unitanques 120L</h3>
+                        <div id="tanks120" class="tanks-container"></div>
+                    </div>
+                    
+                    <div class="tank-category">
+                        <h3>Brite Tank 2000L</h3>
+                        <div id="tanksBrite" class="tanks-container"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Producción Section -->
+            <section id="produccionSection" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-industry"></i> Producción</h2>
+                </div>
+
+                <div class="production-form-container">
+                    <form id="produccionForm" class="production-form">
+                        <div class="form-group">
+                            <label>Receta</label>
+                            <select id="produccionReceta" required>
+                                <option value="">Seleccionar receta...</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Volumen a Producir (L)</label>
+                            <input type="number" id="produccionVolumen" min="1" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Tanque Destino</label>
+                            <select id="produccionTanque" required>
+                                <option value="">Seleccionar tanque...</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Lote / Batch</label>
+                            <input type="text" id="produccionLote" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Fecha de Producción</label>
+                            <input type="date" id="produccionFecha" required>
+                        </div>
+
+                        <div id="recetaDetails" class="receta-details"></div>
+
+                        <button type="submit" class="btn-primary btn-large">
+                            <i class="fas fa-industry"></i> Iniciar Producción
+                        </button>
+                    </form>
+                </div>
+
+                <div class="section-header" style="margin-top: 40px;">
+                    <h3>Historial de Producción</h3>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Lote</th>
+                                <th>Receta</th>
+                                <th>Volumen</th>
+                                <th>Tanque</th>
+                                <th>Usuario</th>
+                            </tr>
+                        </thead>
+                        <tbody id="produccionHistoryBody">
+                            <tr>
+                                <td colspan="6" class="loading">Sin registros</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Insumos Section -->
+            <section id="insumosSection" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-box"></i> Insumos de Envasado</h2>
+                    <button class="btn-primary" onclick="showAjustarInsumoModal()">
+                        <i class="fas fa-edit"></i> Ajustar Stock
+                    </button>
+                </div>
+
+                <div class="insumos-grid">
+                    <div class="insumo-card">
+                        <i class="fas fa-wine-bottle"></i>
+                        <h3>Botellas Vacías</h3>
+                        <p class="stock-value" id="stockBotellas">0</p>
+                        <span class="unit">unidades</span>
+                    </div>
+
+                    <div class="insumo-card">
+                        <i class="fas fa-can-food"></i>
+                        <h3>Latas Vacías</h3>
+                        <p class="stock-value" id="stockLatas">0</p>
+                        <span class="unit">unidades</span>
+                    </div>
+
+                    <div class="insumo-card">
+                        <i class="fas fa-circle"></i>
+                        <h3>Corcholatas</h3>
+                        <p class="stock-value" id="stockCorcholatas">0</p>
+                        <span class="unit">unidades</span>
+                    </div>
+
+                    <div class="insumo-card">
+                        <i class="fas fa-box-open"></i>
+                        <h3>Cajas de Botella</h3>
+                        <p class="stock-value" id="stockCajasBot">0</p>
+                        <span class="unit">unidades</span>
+                    </div>
+
+                    <div class="insumo-card">
+                        <i class="fas fa-box-open"></i>
+                        <h3>Cajas de Lata</h3>
+                        <p class="stock-value" id="stockCajasLata">0</p>
+                        <span class="unit">unidades</span>
+                    </div>
+                </div>
+                
+                <div class="info-box" style="margin-top: 20px; background: var(--info); color: white;">
+                    <i class="fas fa-info-circle"></i> Las etiquetas por estilo se gestionan en la pestaña <strong>"Etiquetas"</strong>
+                </div>
+            </section>
+
+            <!-- Etiquetas Section -->
+            <section id="etiquetasSection" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-tag"></i> Etiquetas por Estilo</h2>
+                    <button class="btn-primary" onclick="showAddEtiquetaModal()">
+                        <i class="fas fa-plus"></i> Agregar Etiquetas
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Estilo</th>
+                                <th>Formato</th>
+                                <th>Stock</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="etiquetasTableBody">
+                            <tr>
+                                <td colspan="5" class="loading">Cargando datos...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Envasado Section -->
+            <section id="envasadoSection" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-wine-bottle"></i> Envasado</h2>
+                </div>
+
+                <div class="envasado-tabs">
+                    <button class="envasado-tab active" data-origen="tanque">Desde Tanque</button>
+                    <button class="envasado-tab" data-origen="barril60">Desde Barril 60L</button>
+                    <button class="envasado-tab" data-origen="barril20">Desde Barril 20L</button>
+                </div>
+
+                <div class="envasado-form-container">
+                    <form id="envasadoForm" class="envasado-form">
+                        <div class="form-group">
+                            <label id="labelOrigen">Tanque Origen</label>
+                            <select id="envasadoOrigen" required>
+                                <option value="">Seleccionar...</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Tipo de Envasado</label>
+                            <select id="envasadoTipo" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="barril60">Barril 60L</option>
+                                <option value="barril20">Barril 20L</option>
+                                <option value="lata">Latas 355ml</option>
+                                <option value="botella">Botellas 355ml</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label id="labelCantidad">Cantidad</label>
+                            <input type="number" id="envasadoCantidad" min="1" required>
+                        </div>
+
+                        <div id="envasadoInfo" class="info-box"></div>
+
+                        <button type="submit" class="btn-primary btn-large">
+                            <i class="fas fa-wine-bottle"></i> Envasar
+                        </button>
+                    </form>
+                </div>
+
+                <div class="section-header" style="margin-top: 40px;">
+                    <h3>Producto Terminado</h3>
+                </div>
+
+                <div class="producto-terminado-grid">
+                    <div id="productoTerminadoContainer"></div>
+                </div>
+            </section>
+
+            <!-- Pedidos Section -->
+            <section id="pedidosSection" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-clipboard-list"></i> Pedidos</h2>
+                    <button class="btn-primary" onclick="showAddPedidoModal()">
+                        <i class="fas fa-plus"></i> Nuevo Pedido
+                    </button>
+                </div>
+
+                <div class="pedidos-filter">
+                    <button class="filter-btn active" data-filter="todos">Todos</button>
+                    <button class="filter-btn" data-filter="pendiente">Pendientes</button>
+                    <button class="filter-btn" data-filter="preparando">Preparando</button>
+                    <button class="filter-btn" data-filter="preparado">Preparados</button>
+                    <button class="filter-btn" data-filter="entregado">Entregados</button>
+                </div>
+
+                <div id="pedidosContainer" class="pedidos-container"></div>
+            </section>
+
+            <!-- Ventas Section -->
+            <section id="ventasSection" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-cash-register"></i> Ventas y Degustaciones</h2>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn-primary" onclick="showRegistrarVentaModal()">
+                            <i class="fas fa-plus"></i> Registrar Venta
+                        </button>
+                        <button class="btn-primary" onclick="showRegistrarDegustacionModal()">
+                            <i class="fas fa-wine-glass"></i> Registrar Degustación
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabs para Ventas y Degustaciones -->
+                <div class="envasado-tabs">
+                    <button class="envasado-tab active" data-ventas-tab="ventas">Ventas</button>
+                    <button class="envasado-tab" data-ventas-tab="degustaciones">Degustaciones</button>
+                </div>
+
+                <!-- Tabla de Ventas -->
+                <div id="ventasTableContainer" class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Cliente</th>
+                                <th>Detalle</th>
+                                <th>Total</th>
+                                <th>Usuario</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ventasTableBody">
+                            <tr>
+                                <td colspan="5" class="loading">Sin registros</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Tabla de Degustaciones -->
+                <div id="degustacionesTableContainer" class="table-container" style="display: none;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Evento/Persona</th>
+                                <th>Detalle</th>
+                                <th>Usuario</th>
+                            </tr>
+                        </thead>
+                        <tbody id="degustacionesTableBody">
+                            <tr>
+                                <td colspan="4" class="loading">Sin registros</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Reportes Section -->
+            <section id="reportesSection" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-chart-bar"></i> Reportes y Estadísticas</h2>
+                </div>
+
+                <!-- Filtros de Fecha -->
+                <div class="reportes-filtros">
+                    <div class="form-group" style="display: inline-block; margin-right: 20px;">
+                        <label>Desde:</label>
+                        <input type="date" id="reporteFechaDesde" style="padding: 8px; border: 2px solid var(--gray-300); border-radius: 6px;">
+                    </div>
+                    <div class="form-group" style="display: inline-block; margin-right: 20px;">
+                        <label>Hasta:</label>
+                        <input type="date" id="reporteFechaHasta" style="padding: 8px; border: 2px solid var(--gray-300); border-radius: 6px;">
+                    </div>
+                    <button class="btn-primary" onclick="actualizarReportes()">
+                        <i class="fas fa-sync"></i> Actualizar
+                    </button>
+                </div>
+
+                <!-- Stats de Reportes -->
+                <div class="stats-grid" style="margin-top: 30px;">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #d4af37;">
+                            <i class="fas fa-industry"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="reporteTotalProducido">0</h3>
+                            <p>Litros Producidos</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #cd853f;">
+                            <i class="fas fa-wine-bottle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="reporteTotalEnvasado">0</h3>
+                            <p>Litros Envasados</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #b8860b;">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="reporteTotalVendido">0</h3>
+                            <p>Litros Vendidos</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #8b7355;">
+                            <i class="fas fa-percent"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="reporteEficiencia">0%</h3>
+                            <p>Eficiencia Envasado</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #9d7c4f;">
+                            <i class="fas fa-beer"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="reporteTotalLatas">0 pzas</h3>
+                            <p>🥫 Latas Envasadas</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #a0826d;">
+                            <i class="fas fa-wine-bottle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="reporteTotalBotellas">0 pzas</h3>
+                            <p>🍾 Botellas Envasadas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gráficas -->
+                <div class="charts-grid" style="margin-top: 30px;">
+                    <div class="chart-container">
+                        <h3>Litros Envasados por Estilo</h3>
+                        <canvas id="chartLitrosEstilo" style="height: 300px;"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Producción vs Envasado</h3>
+                        <canvas id="chartProduccionEnvasado" style="height: 300px;"></canvas>
+                    </div>
+                </div>
+
+                <!-- Tabla Detallada -->
+                <div class="section-header" style="margin-top: 40px;">
+                    <h3>Historial de Envasado</h3>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Estilo</th>
+                                <th>Origen</th>
+                                <th>Tipo Envasado</th>
+                                <th>Cantidad</th>
+                                <th>Litros</th>
+                                <th>PZAS</th>
+                                <th>Usuario</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historialEnvasadoBody">
+                            <tr>
+                                <td colspan="8" class="loading">Sin registros</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Tabla por Estilo -->
+                <div class="section-header" style="margin-top: 40px;">
+                    <h3>Resumen por Estilo</h3>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Estilo</th>
+                                <th>Litros Producidos</th>
+                                <th>Litros Envasados</th>
+                                <th>Litros Vendidos</th>
+                                <th>Stock Actual (L)</th>
+                                <th>PZAS Envasadas</th>
+                                <th>PZAS en Stock</th>
+                                <th>% Envasado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resumenEstilosBody">
+                            <tr>
+                                <td colspan="8" class="loading">Cargando...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals Container -->
+    <div id="modalsContainer"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/materiasPrimas.js"></script>
+    <script src="js/recetas.js"></script>
+    <script src="js/estilos.js"></script>
+    <script src="js/unitanques.js"></script>
+    <script src="js/produccion.js"></script>
+    <script src="js/insumos.js"></script>
+    <script src="js/etiquetas.js"></script>
+    <script src="js/envasado.js"></script>
+    <script src="js/pedidos.js"></script>
+    <script src="js/ventas.js"></script>
+    <script src="js/reportes.js"></script>
+    <script src="js/modals.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
