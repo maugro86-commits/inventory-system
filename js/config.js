@@ -7,7 +7,7 @@
      7	const CONFIG = {
      8	    // URL de tu Google Apps Script (obtener después del despliegue)
      9	    // Cambia esto a 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE' para usar modo local sin API
-    10	    SHEET_API_URL: 'https://script.google.com/macros/s/AKfycby7Z0O2dHPOTVvk7h168lrdz_cx71CM4xMwxsxhYG889NwRFoA0pOQaSuuYZU42JgHj/exec',
+    10	    SHEET_API_URL: 'https://script.google.com/macros/s/AKfycbyXIyq0TE9PQikSoGQuFU0i2ZGyMoMlINXXQy1FoP535H6ix_uPFSD_bJWoGxzU_nCp/exec',
     11	    
     12	    // Configuración de la aplicación
     13	    APP_NAME: 'Cervecería - Sistema de Inventarios',
